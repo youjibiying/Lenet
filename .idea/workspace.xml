@@ -15,6 +15,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1PsYSyTHydiUTDXCuFhWHbAZxW3" />
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -32,7 +35,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.plotloss">
+  <component name="RunManager" selected="Python.train">
     <configuration name="CNN_mnist" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="CNN" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -140,9 +143,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.train" />
         <item itemvalue="Python.plotloss" />
         <item itemvalue="Python.RNN" />
-        <item itemvalue="Python.train" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.CNN_mnist" />
       </list>
@@ -160,6 +163,17 @@
       <updated>1566664274298</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

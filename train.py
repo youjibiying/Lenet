@@ -15,13 +15,14 @@ from torchvision import datasets, transforms
 import math
 from All_model import BCN, CNN, Lenet
 import pickle
+import os
 
 
 #  Softmax+Log+NLLLoss==交叉熵
 
 
 def save_variable_Loss(v, filename):
-    filename = '../Loss/' + filename + '_loss.txt'
+    filename = './Loss/' + filename + '_loss.txt'
     f = open(filename, 'wb')
     pickle.dump(v, f)
     f.close()
@@ -29,7 +30,7 @@ def save_variable_Loss(v, filename):
 
 
 def save_variable_accur(v, filename):
-    filename = '../Loss/' + filename + '_accur.txt'
+    filename = './Loss/' + filename + '_accur.txt'
     f = open(filename, 'wb')
     pickle.dump(v, f)
     f.close()
@@ -103,7 +104,7 @@ def main():
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {} # num_workers 是多线程的意思
     # pin_memory（bool, 可选）– 如果设置为True，数据加载器会在返回前将张量拷贝到CUDA锁页内存。
     train_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('./mnist', train=True, download=False,
+        datasets.MNIST('../data/mnist', train=True, download=not os.path.exists('../data/mnist'),
                        transform=transforms.Compose([
                            transforms.ToTensor(),
                            transforms.Normalize((0.1307,), (0.3081,))
@@ -111,7 +112,7 @@ def main():
         batch_size=args.batch_size, shuffle=True, **kwargs)
     
     test_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('./mnist', train=False, transform=transforms.Compose([
+        datasets.MNIST('../data/mnist', train=False, transform=transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.1307,), (0.3081,))
         ])),
@@ -133,10 +134,10 @@ def main():
         test(args, model, device, test_loader, accur)
     # save_variable_accur(accur, name)
     # save_variable_Loss(lossRecord, name)
-    if (args.save_model):
-        torch.save(model.state_dict(), './model/' + name + '_params.pkl')  # save only the parameters
-        print(model)
-        print(">>>>>>>>>>>" + name + " Model has been Saved successfully! ")
+    # if (args.save_model):
+    #     torch.save(model.state_dict(), './model/' + name + '_params.pkl')  # save only the parameters
+    #     print(model)
+    #     print(">>>>>>>>>>>" + name + " Model has been Saved successfully! ")
 
 
 if __name__ == '__main__':
