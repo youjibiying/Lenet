@@ -43,14 +43,24 @@ def train(args, model, device, train_loader, optimizer, epoch, lossRecord):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
+
+
         loss = F.nll_loss(output, target)  # Softmax+Log+NLLLoss==交叉熵
-        loss.backward()
-        optimizer.step()
+        grad = torch.autograd.grad(loss, model.parameters())
+        model_dict = model.state_dict()
+        fast_weights = list(map(lambda p: p[1] - 0.2 * p[0], zip(grad, model.parameters())))
+        pretrained_dict = {k: v for k, v in zip(model_dict.keys(), fast_weights)}
+        model_dict.update(pretrained_dict)
+        model.load_state_dict(model_dict)
+        # loss.backward()
+        # optimizer.step()
         if batch_idx % args.log_interval == 0:  # 展示区间
             lossRecord.append(loss.item())
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                        100. * batch_idx / len(train_loader), loss.item()))
+            # print(output)
+
 
 
 def test(args, model, device, test_loader, accur):
@@ -72,15 +82,16 @@ def test(args, model, device, test_loader, accur):
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
+
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='writing digital recognition')
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+    parser.add_argument('--batch-size', type=int, default=32, metavar='N',
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
-                        help='number of epochs to train (default: 10)')
+                        help='number of epochs to train (default: 1)')
     parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                         help='learning rate (default: 0.01)')
     parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
@@ -101,7 +112,7 @@ def main():
 
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {} # num_workers 是多线程的意思
+    kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}  # num_workers 是多线程的意思
     # pin_memory（bool, 可选）– 如果设置为True，数据加载器会在返回前将张量拷贝到CUDA锁页内存。
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data/mnist', train=True, download=not os.path.exists('../data/mnist'),
@@ -110,7 +121,7 @@ def main():
                            transforms.Normalize((0.1307,), (0.3081,))
                        ])),
         batch_size=args.batch_size, shuffle=True, **kwargs)
-    
+
     test_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data/mnist', train=False, transform=transforms.Compose([
             transforms.ToTensor(),
