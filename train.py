@@ -41,7 +41,7 @@ def train(args, model, device, train_loader, optimizer, epoch, lossRecord):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
-        optimizer.zero_grad()
+        # optimizer.zero_grad()
         output = model(data)
 
 
@@ -52,8 +52,8 @@ def train(args, model, device, train_loader, optimizer, epoch, lossRecord):
         pretrained_dict = {k: v for k, v in zip(model_dict.keys(), fast_weights)}
         model_dict.update(pretrained_dict)
         model.load_state_dict(model_dict)
-        # loss.backward()
-        # optimizer.step()
+        loss.backward()
+        optimizer.step()
         if batch_idx % args.log_interval == 0:  # 展示区间
             lossRecord.append(loss.item())
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
